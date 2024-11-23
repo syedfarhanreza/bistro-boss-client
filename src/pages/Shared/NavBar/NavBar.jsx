@@ -1,9 +1,12 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../../providers/AuthProvider";
+import { FaShoppingCart } from 'react-icons/fa';
+import useCart from "../../../hooks/useCart";
 
 const NavBar = () => {
   const { user, logOut } = useContext(AuthContext);
+  const [cart] = useCart();
 
   const handleLogOut = () => {
     logOut()
@@ -28,10 +31,20 @@ const NavBar = () => {
       <li>
         <Link to="/order/salad">Our Shop</Link>
       </li>
+      <li>
+        <Link to="/">
+          <button className="btn">
+            <FaShoppingCart className="mr-2"></FaShoppingCart>
+            <div className="badge badge-secondary">+{cart.length}</div>
+          </button>
+        </Link>
+      </li>
       {user ? (
         <>
-          <span>{user?.displayName}</span>
-          <button onClick={handleLogOut} className="btn btn-ghost">Logout</button>
+          {/* <span>{user?.displayName}</span> */}
+          <button onClick={handleLogOut} className="btn btn-ghost">
+            Logout
+          </button>
         </>
       ) : (
         <>
@@ -70,7 +83,9 @@ const NavBar = () => {
               {navOptions}
             </ul>
           </div>
-          <Link to="/" className="btn btn-ghost text-xl flex flex-col">Bistro Boss</Link>
+          <Link to="/" className="btn btn-ghost text-xl flex flex-col">
+            Bistro Boss
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{navOptions}</ul>
