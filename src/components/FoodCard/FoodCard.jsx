@@ -2,6 +2,7 @@ import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useCart from "../../hooks/useCart";
 
 const FoodCard = ({ item, button }) => {
   const { name, image, price, recipe, _id } = item;
@@ -9,30 +10,31 @@ const FoodCard = ({ item, button }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const axiosSecure = useAxiosSecure();
-  const handleAddToCart = (food) => {
+  const [,refetch] = useCart();
+  const handleAddToCart = () => {
     if (user && user.email) {
-      //  TODO:  send cart item to the database
-      console.log(user.email, food);
+      //!  send cart item to the database
       const cartItem = {
         menuItemId: _id,
         email: user.email,
         name,
         image,
         price,
-      }
-      axiosSecure.post('/carts', cartItem)
-      .then(res =>{
+      };
+      axiosSecure.post("/carts", cartItem).then((res) => {
         console.log(res.data);
-        if(res.data.insertedId){
+        if (res.data.insertedId) {
           Swal.fire({
             position: "center",
             icon: "success",
             title: `${name} added to your cart`,
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
+          // * refetch cart to update the cart items count
+          refetch();
         }
-      })
+      });
     } else {
       Swal.fire({
         title: "You are not logged In",
@@ -45,7 +47,7 @@ const FoodCard = ({ item, button }) => {
       }).then((result) => {
         if (result.isConfirmed) {
           // sent to the login page
-          navigate("/login", {state: {from: location}});
+          navigate("/login", { state: { from: location } });
         }
       });
     }
@@ -64,7 +66,7 @@ const FoodCard = ({ item, button }) => {
           <p>{recipe}</p>
           <div className="card-actions">
             <button
-              onClick={() => handleAddToCart(item)}
+              onClick={handleAddToCart}
               className="btn  border-b-4 border-b-[#D99904] text-[#D99904] hover:text-[#D99904] hover:bg-gray-950"
             >
               {button}
