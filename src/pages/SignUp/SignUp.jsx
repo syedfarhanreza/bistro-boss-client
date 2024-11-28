@@ -13,30 +13,29 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
-  const {createUser,updateUserProfile} = useContext(AuthContext);
+  const { createUser, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    console.log(data);
-    createUser(data.email, data.password)
-    .then(result => {
-      const  loggedUser = result.user;
+    createUser(data.email, data.password).then((result) => {
+      const loggedUser = result.user;
       console.log(loggedUser);
-      updateUserProfile(data.name,data.photoURL)
-      .then(() =>{
-          console.log("User Profile Updated");
+      updateUserProfile(data.name, data.photoURL)
+        .then(() => {
+          // console.log("User Profile Updated");
+          // create user entry in the database
           reset();
           Swal.fire({
             position: "top-end",
             icon: "success",
             title: "User Created Successfully",
             showConfirmButton: false,
-            timer: 1500
+            timer: 1500,
           });
-          navigate("/"); 
-      })
-      .catch(error => console.log(error))
-    })
+          navigate("/");
+        })
+        .catch((error) => console.log(error));
+    });
   };
 
   return (
@@ -153,9 +152,12 @@ const SignUp = () => {
                 />
               </div>
             </form>
-            <p>
+            <p className="px-6">
               <small>
-                Already have an account? <Link to="/login" className="text-blue-600">Login !!!</Link>
+                Already have an account?{" "}
+                <Link to="/login" className="text-blue-600">
+                  Login !!!
+                </Link>
               </small>
             </p>
           </div>
